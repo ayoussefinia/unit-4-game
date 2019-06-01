@@ -1,0 +1,37 @@
+/* sets the game container to window size without scroll bars */
+.game-container {
+  background: lightblue;
+  width: calc(100%-20px);
+  min-height: 100vh;
+  border: 10px solid black;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden; 
+}
+
+#character-container {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 120px;
+  background-color: aquamarine;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#battle-ground {
+  position: absolute;
+  top: 120px;
+  width:100%;
+  min-height: 900px;
+  background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://images.unsplash.com/photo-1543083115-638c32cd3d58?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1189&q=80");
+  opacity: .5;
+  background-position: 50% 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#character1 {
+  background-image: url('  https://images.unsplash.com/photo-1549651427-1118c06e1e27?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=200&q=60');
+}
