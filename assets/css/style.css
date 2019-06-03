@@ -9,6 +9,8 @@
   overflow: hidden; 
 }
 
+
+/* container for the characters on the top of the screen */
 #character-container {
   position: absolute;
   top: 0;
@@ -18,8 +20,23 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
+  border-bottom: 1.5px solid black;
 }
 
+.instruction-box {
+  position: absolute;
+  top: 150px;
+  left: 25vw;
+  width: 50vw;
+  height: 20vh;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+/* futuristic background image */
 #battle-ground {
   position: absolute;
   top: 120px;
@@ -34,4 +51,77 @@
 
 #character1 {
   background-image: url('  https://images.unsplash.com/photo-1549651427-1118c06e1e27?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=200&q=60');
+}
+
+
+.chosen-character {
+  width: 100%;
+  height: 66.66%;
+  align-self: center;
+  display: block;
+  
+  /* position: absolute;
+  top: 50vh;
+  left: 10vw; */
+}
+
+
+/* creates the stats box around character and centers character in the middle */
+.stats-container {
+  position: absolute;
+  top: 70vh;
+  left: 80vw;
+  width: 80px;
+  height: 110px;
+  background: white;
+  border:1.5px solid black;
+  
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+}
+
+.position-one {
+  top: 50vh;
+  left: 10vw;
+}
+
+.position-two {
+  top: 70vh;
+  left: 10vw;
+}
+.position-three {
+  top: 50vh;
+  left: 80vw;
+}
+
+.position-four {
+  top: 70vh;
+  left: 80vw;
+}
+
+.life-force {
+  font-size: .75rem;
+  font-weight:1000;
+  margin-top: 3px;
+  margin-left: .5px;
+}
+.player-power {
+  font-size: .75rem;
+  font-weight:1000;
+  margin-top: 0;
+  margin-left: .5px;
+}
+
+.instruction-box {
+  border: 1.5px solid black;
+}
+
+#instruction-message {
+  font-size: 2rem;
+  font-weight: 500;
+}
+#instruction-message2 {
+  font-size: 1.8rem;
+  font-weight: 500;
 }
