@@ -83,7 +83,10 @@ let vader = {
 
 let playerOneChosen = false;
 let opponentChosen = false;
+let attackMode = true;
 let playerOneId;
+let player;
+let computer;
 
 
 
@@ -165,8 +168,21 @@ instrunctionBox.innerHTML =`<h1 id='instruction-message'>Choose A Character to B
 <h1 id='instruction-message2'></h1>`;
 gameWindow.appendChild(instrunctionBox);
 
+function attackHandler(user) {
+  let randomAttack = Math.random();
+  let attackPower;
+  if(randomAttack <= .333) {
+    attackPower = (user.power / 3)*.5;
+  } else if( .333 > randomAttack <= .666) {
+    attackPower = (user.power / 3)*.75;
+  } else if(randomAttack > .666) {
+    attackPower = (user.power / 3)
+  }
+  return Math.floor(attackPower);
+}
+
 //messages display
-function messageHandler(message, character) {
+function messageHandler(message, character, damage) {
   if(message == 'initial') {
     document.getElementById('instruction-message').textContent = `you chose ${character.name}`;
     setTimeout(function(){document.getElementById('instruction-message2').textContent = `Choose Your Opponent`}, 1000);
@@ -174,13 +190,81 @@ function messageHandler(message, character) {
     document.getElementById('instruction-message2').textContent = '';
     document.getElementById('instruction-message').textContent = `your opponent is ${character.name}`;
     setTimeout(function(){document.getElementById('instruction-message2').textContent = `Click Below to Attack!!!`}, 1200);
-  }
+  } else if (message == 'hit'){
+    document.getElementById('instruction-message').textContent =`You hit ${character.name} and inflicted ${damage} damage`;
+    setTimeout(function(){document.getElementById('instruction-message2').textContent = `Select a defense position`}, 1200);
+  } else if (message == 'miss') {
+    document.getElementById('instruction-message').textContent =`You missed ${character.name}`;
+    setTimeout(function(){document.getElementById('instruction-message2').textContent = `Select a defense position`}, 1200);
+  } else if (message == 'dodge') {
+    document.getElementById('instruction-message').textContent =`You dodged ${character.name}'s attack`;
+    document.getElementById('instruction-message2').textContent = '';
+  } else if (message == 'hurt') {
+    document.getElementById('instruction-message').textContent =`${character.name} attacked you and inflicted ${damage} damage`;
+  } 
+ }
+
+ var buttonsBox = document.createElement('div');
+  buttonsBox.classList.add('buttons-box');
+  gameWindow.appendChild(buttonsBox);
+  //creates parent div for defense buttons
+  var defenseButtons = document.createElement('div');
+  defenseButtons.classList.add('defense-buttons');
+  buttonsBox.appendChild(defenseButtons);
+
+  //defense buttons
+  var defendUp = document.createElement('div');
+  defendUp.setAttribute('id', 'defend-up');
+  defenseButtons.appendChild(defendUp);
   
-}
+  var defendUpButton = document.createElement('button');
+  defendUpButton.setAttribute('id', 'defend-up-button');
+  defendUpButton.textContent = "Defend Up";
+  defendUp.appendChild(defendUpButton);
+
+  var defendDown = document.createElement('div');
+  defendDown.setAttribute('id', 'defend-down');
+  defenseButtons.appendChild(defendDown);
+
+  var defendDownButton = document.createElement('button');
+  defendDownButton.setAttribute('id', 'defend-down-button');
+  defendDownButton.textContent = "Defend Down";
+  defendDown.appendChild(defendDownButton);
+  
+  //player attacks first
+  
+
+  
+  var attackButtons = document.createElement('div');
+  attackButtons.classList.add('attack-buttons');
+  buttonsBox.appendChild(attackButtons);
+
+  var attackUp = document.createElement('div');
+  attackUp.setAttribute('id', 'attack-up');
+  attackButtons.appendChild(attackUp);
+ 
+
+  var attackUpButton = document.createElement('button');
+  attackUpButton.setAttribute('id', 'attack-up-button');
+  attackUpButton.textContent = "Attack Up";
+  attackUp.appendChild(attackUpButton);
+
+  var attackDown = document.createElement('div');
+  attackDown.setAttribute('id', 'attack-down');
+  attackButtons.appendChild(attackDown);
+  
+  var attackDownButton = document.createElement('button');
+  attackDownButton.setAttribute('id', 'attack-down-button');
+  attackDownButton.textContent = "Attack Down";
+  attackDown.appendChild(attackDownButton);
+
+  defenseButtons.style.display = 'none';
+  attackButtons.style.display = 'none';
 
 //*************EVENT LISTENR**************************************/
-document.getElementById('character-container').addEventListener('click', function(event) {
+document.getElementsByClassName('body-container')[0].addEventListener('click', function(event) {
   console.log("clicked");
+  
 
 
 //user needs to pick a character first
@@ -191,15 +275,16 @@ document.getElementById('character-container').addEventListener('click', functio
       playerOneChosen = true;
       messageHandler('initial', userCharacter);
       
-      let player = createCharacterStatsContainer(userCharacter, stormTrooperPicture);
+      player = createCharacterStatsContainer(userCharacter, stormTrooperPicture);
       player.classList.add('position-one');
+     
       statsHandler(userCharacter);
     } else if(playerOneId == 'character2') {
       userCharacter = yoda;
       playerOneChosen = true;
       messageHandler('initial', userCharacter);
 
-      let player = createCharacterStatsContainer(userCharacter,yodaPicture);
+      player = createCharacterStatsContainer(userCharacter,yodaPicture);
       player.classList.add('position-one');
       statsHandler(userCharacter);
     }else if(playerOneId == 'character3') {
@@ -207,7 +292,7 @@ document.getElementById('character-container').addEventListener('click', functio
       playerOneChosen = true;
       messageHandler('initial', userCharacter);
 
-      let player = createCharacterStatsContainer(userCharacter, bobaFetPicture);
+      player = createCharacterStatsContainer(userCharacter, bobaFetPicture);
       player.classList.add('position-one');
       statsHandler(userCharacter);
     }else if(playerOneId == 'character4') {
@@ -215,7 +300,7 @@ document.getElementById('character-container').addEventListener('click', functio
       playerOneChosen = true;
       messageHandler('initial', userCharacter);
 
-      let player = createCharacterStatsContainer(userCharacter, jabbaPicture);
+      player = createCharacterStatsContainer(userCharacter, jabbaPicture);
       player.classList.add('position-one');
       statsHandler(userCharacter);
     }
@@ -224,7 +309,7 @@ document.getElementById('character-container').addEventListener('click', functio
       playerOneChosen = true;
       messageHandler('initial', userCharacter);
 
-      let player = createCharacterStatsContainer(userCharacter, vaderPicture);
+      player = createCharacterStatsContainer(userCharacter, vaderPicture);
       player.classList.add('position-one');
       statsHandler(userCharacter);
     };
@@ -238,43 +323,181 @@ document.getElementById('character-container').addEventListener('click', functio
       computerCharacter = stormTrooper;
       opponentChosen = true;
       messageHandler('second', computerCharacter);
-      let computer = createCharacterStatsContainer(computerCharacter, stormTrooperPicture);
+      computer = createCharacterStatsContainer(computerCharacter, stormTrooperPicture);
       computer.classList.add('position-three');
+      computerCharacter.position  = 3;
       statsHandler(computerCharacter);
     }else if (computerId == 'character2') {
       opponentChosen = true;
       computerCharacter = yoda;
       messageHandler('second', computerCharacter);
-      let computer = createCharacterStatsContainer(computerCharacter, yodaPicture);
+      computer = createCharacterStatsContainer(computerCharacter, yodaPicture);
       computer.classList.add('position-three');
+      computerCharacter.position  = 3;
       statsHandler(computerCharacter);
     }else if (computerId == 'character3') {
       opponentChosen = true;
       computerCharacter = bobaFet;
       messageHandler('second', computerCharacter);
-      let computer = createCharacterStatsContainer(computerCharacter, bobaFetPicture);
+      computer = createCharacterStatsContainer(computerCharacter, bobaFetPicture);
       computer.classList.add('position-three');
+      computerCharacter.position  = 3;
       statsHandler(computerCharacter);
     }else if (computerId == 'character4') {
       opponentChosen = true;
       computerCharacter = jabba;
       messageHandler('second', computerCharacter);
-      let computer = createCharacterStatsContainer(computerCharacter, jabbaPicture);
+      computer = createCharacterStatsContainer(computerCharacter, jabbaPicture);
       computer.classList.add('position-three');
+      computerCharacter.position  = 3;
       statsHandler(computerCharacter);
     }else if (computerId == 'character5') {
       opponentChosen = true;
       computerCharacter = vader;
       messageHandler('second', computerCharacter);
-      let computer = createCharacterStatsContainer(computerCharacter, vaderPicture);
+      computer = createCharacterStatsContainer(computerCharacter, vaderPicture);
       computer.classList.add('position-three');
+      computerCharacter.position  = 3;
       statsHandler(computerCharacter);
     }
   }
 
-  if (playerOneChosen == true && opponentChosen == true) {
-    document.createElement('div');
+  if (playerOneChosen == true && opponentChosen == true && attackMode== true) {
+    
+    
+    attackButtons.style.display = 'flex';
+    
+    
+
+  
+    if(event.target.id == 'attack-up-button' && userCharacter.life > 0 && computerCharacter.life > 0){
+      attackMode =false;
+      attackButtons.style.display ="none";
+      defenseButtons.style.display = "flex";
+      //random swich decides if the computer wants to defend up or dow
+      randomSwitch = Math.random();
+      if(randomSwitch < .5) {
+        computerCharacter.position = 4;
+        computer.classList.remove('position-three');
+        computer.classList.add('position-four');
+        messageHandler('miss', computerCharacter);
+
+       
+
+       
+      } else if (randomSwitch >= .5) {
+        attackStrength = attackHandler(userCharacter);
+        messageHandler('hit', computerCharacter, attackStrength)
+        computerCharacter.life = computerCharacter.life - attackStrength;
+        document.getElementsByClassName('attack-buttons')[0].style.display = "none";
+      }
+      
+    } else if (event.target.id == 'attack-down-button' && userCharacter.life > 0 && computerCharacter.life > 0) {
+      attackMode =false;
+      attackButtons.style.display ="none";
+      defenseButtons.style.display = "flex";
+      //random swich decides if the computer wants to defend up or dow
+      randomSwitch = Math.random();
+      if(randomSwitch < .5) {
+        computerCharacter.position = 4;
+        computer.classList.remove('position-three');
+        computer.classList.add('position-four');
+        attackStrength = attackHandler(userCharacter);
+        messageHandler('hit', computerCharacter, attackStrength);
+        computerCharacter.life = computerCharacter.life - attackStrength;
+       
+      } else if (randomSwitch >= .5) {
+        computerCharacter.position = 3;
+        computer.classList.remove('position-four');
+        computer.classList.add('position-three');
+        messageHandler('miss', computerCharacter)
+  
+      }
+    }
+
+    // } else if (event.target.id == 'defend-up-button' && userCharacter.life > 0 && computerCharacter.life > 0) {
+    //   attackMode =true;
+    //   attackButtons.style.display ="flex";
+    //   defenseButtons.style.display = "none";
+    //   //random swich decides if the computer wants to defend up or dow
+    //   randomSwitch = Math.random();
+    //   if(randomSwitch < .5) {
+    //     userCharacter.position = 2;
+    //     computer.classList.remove('position-one');
+    //     computer.classList.add('position-two');
+    //     messageHandler('dodge', computerCharacter);
+
+       
+    //   } else if (randomSwitch >= .5) {
+    //     computerCharacter.position = 1;
+    //     computer.classList.remove('position-two');
+    //     computer.classList.add('position-one');
+        
+    //     attackStrength = attackHandler(computerCharacter);
+    //     messageHandler('hurt', computerCharacter, attackStrength);
+
+    //     userCharacter.life = userCharacter.life - attackStrength;
+  
+    //   }
+    // }
+
+   
+
   }
+  if (playerOneChosen == true && opponentChosen == true && attackMode== false) {
+    attackButtons.style.display = 'none';
+    defenseButtons.style.display = 'flex';
+      if(event.target.id == 'defend-up-button' && userCharacter.life > 0 && computerCharacter.life > 0){
+        attackButtons.style.display = 'flex';
+        defenseButtons.style.display = 'none';
+        attackMode =true;
+        player.classList.add('position-one');
+        player.classList.remove('position-two');
+        userCharacter.position = 2;
+        //random swich decides if the computer wants to defend up or dow
+        randomSwitch = Math.random();
+
+        if(randomSwitch < .5) {
+          messageHandler('dodge', computerCharacter);
+
+        } else if (randomSwitch >= .5) {
+          attackStrength = attackHandler(computerCharacter);
+          messageHandler('hurt', computerCharacter, attackStrength)
+          userCharacter.life = userCharacter.life - attackStrength;
+
+        }
+      } else if(event.target.id == 'defend-down-button' && userCharacter.life > 0 && computerCharacter.life > 0){
+        attackButtons.style.display = 'flex';
+        defenseButtons.style.display = 'none';
+        attackMode =true;
+        player.classList.add('position-two');
+        player.classList.remove('position-one');
+        userCharacter.position = 2;
+        //random swich decides if the computer wants to defend up or dow
+        randomSwitch = Math.random();
+        if(randomSwitch < .5) {
+          
+
+          attackStrength = attackHandler(computerCharacter);
+          messageHandler('hurt', computerCharacter, attackStrength)
+          userCharacter.life = userCharacter.life - attackStrength;
+          
+
+        } else if (randomSwitch >= .5) {
+          
+          messageHandler('dodge', computerCharacter)
+
+        }
+      }
+      // } else if(computerCharacter.life <= 0) {
+
+      // }
+
+  }
+
+  statsHandler(computerCharacter);
+  statsHandler(userCharacter);
+
 
   function statsHandler(character) {
     let forceArg = `force-stat${character.id}`;
@@ -284,11 +507,6 @@ document.getElementById('character-container').addEventListener('click', functio
     document.getElementById(forceArg).textContent = character.life;
     document.getElementById(powerArg).textContent = character.power;
   }
- 
-    // document.getElementById("force-stat1").textContent = stormTrooper.life;
-    // document.getElementById("power-stat1").textContent = stormTrooper.power;
-    // document.getElementById("force-stat2").textContent = yoda.life;
-    // document.getElementById("power-stat2").textContent = yoda.power;
   
   
 
