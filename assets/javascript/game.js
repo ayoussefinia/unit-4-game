@@ -50,7 +50,8 @@ let stormTrooper = {
   "power" : 160,
   "position":1,
   "initialPower" : 160,
-  "absorbed" : 16
+  "absorbed" : 32,
+  "initialLife" : 350
 }
 let yoda = {
   "id" : 2,
@@ -59,7 +60,8 @@ let yoda = {
   "power" : 270,
   "position":1,
   "initialPower" : 270,
-  "absorbed" : 27
+  "absorbed" : 54,
+  "initialLife" : 350
 }
 
 let bobaFet = {
@@ -69,7 +71,8 @@ let bobaFet = {
   "power" : 190,
   "position":1,
   "initialPower" : 190,
-  "absorbed" : 19
+  "absorbed" : 38,
+  "initialLife" : 350
 }
 let jabba = {
   "id" : 4,
@@ -78,7 +81,8 @@ let jabba = {
   "power" : 220,
   "position":1,
   "initialPower" : 220,
-  "absorbed" : 22
+  "absorbed" : 44,
+  "initialLife" : 350
 }
 
 let vader = {
@@ -88,12 +92,14 @@ let vader = {
   "power" : 250,
   "position":1,
   "initialPower" : 250,
-  "absorbed" : 25
+  "absorbed" : 50,
+  "initialLife" : 350
 }
 
 let playerOneChosen = false;
 let opponentChosen = false;
 let attackMode = true;
+let numberOfOpponents = 4;
 let playerOneId;
 let player;
 let computer;
@@ -199,11 +205,11 @@ function attackHandler(user) {
   let randomAttack = Math.random();
   let attackPower;
   if(randomAttack <= .333) {
-    attackPower = (user.power*2)*.5;
+    attackPower = (user.power)*.5;
   } else if( .333 > randomAttack <= .666) {
-    attackPower = (user.power*2)*.75;
+    attackPower = (user.power)*.75;
   } else if(randomAttack > .666) {
-    attackPower = (user.power*2)
+    attackPower = (user.power)
   }
   return Math.floor(attackPower);
 }
@@ -235,6 +241,9 @@ function messageHandler(message, character, damage) {
   } else if (message == 'win') {
     document.getElementById('instruction-message').textContent =`You Beat ${character.name} and absorbed ${character.absorbed} Life Force`;
     setTimeout(function(){document.getElementById('instruction-message2').textContent = `Select Your Nex Opponent`}, 1200);
+  } else if (message = 'game over win') {
+    document.getElementById('instruction-message').textContent =`Congrats!!! You Beat the Game`;
+    setTimeout(function(){document.getElementById('instruction-message2').textContent = `refresh page or wait ten seconds to play again`}, 1200);
   }
 
 
@@ -302,8 +311,8 @@ function messageHandler(message, character, damage) {
 //*************EVENT LISTENR**************************************/
 document.getElementsByClassName('body-container')[0].addEventListener('click', function(event) {
   console.log("clicked");
-  
-
+  console.log("number of opponents: " +numberOfOpponents);
+if (numberOfOpponents > 0 ) {
 
 //user needs to pick a character first that will appear on the left side of the screen
   if(playerOneChosen == false && opponentChosen == false) {
@@ -440,9 +449,29 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
            defenseButtons.style.display = "none";
            removeStatsContainer(player);
            removeStatsContainer(computer);
-           gameWindow.removeChild(buttonsBox);
+           userCharacter.life = userCharacter.initialLife;
+           userCharacter.power = userCharacter.initialPower;
+           computerCharacter.life = computerCharacter.initialLife;
+           computerCharacter.power = computerCharacter.initialPower;
+
+           playerOneChosen = false;
+           opponentChosen = false;
         } else if (computerCharacter.life <= 0) {
+          console.log("insidethe win handler: "+ computer);
           messageHandler('win', computerCharacter);
+          player.classList.remove('position-two');
+          player.classList.add('position-one');
+          gameWindow.removeChild(computer);
+          userCharacter.life = userCharacter.initialLife + computerCharacter.absorbed;
+          userCharacter.power = userCharacter.initialPower;
+          attackButtons.style.display ="none";
+          defenseButtons.style.display = "none";
+          opponentChosen = false;
+          attackMode = true;
+          numberOfOpponents = numberOfOpponents -1;
+          if (numberOfOpponents == 0) {
+            messageHandler('game over win');
+          }
         }
       }
       
@@ -470,9 +499,29 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
            defenseButtons.style.display = "none";
            removeStatsContainer(player);
            removeStatsContainer(computer);
-           gameWindow.removeChild(buttonsBox);
+           userCharacter.life = userCharacter.initialLife;
+           userCharacter.power = userCharacter.initialPower;
+           computerCharacter.life = computerCharacter.initialLife;
+           computerCharacter.power = computerCharacter.initialPower;
+     
+           playerOneChosen = false;
+           opponentChosen = false;
         } else if (computerCharacter.life <= 0) {
+          console.log("insidethe win handler: "+ computer);
           messageHandler('win', computerCharacter);
+          player.classList.remove('position-two');
+          player.classList.add('position-one');
+          gameWindow.removeChild(computer);
+          userCharacter.life = userCharacter.initialLife + computerCharacter.absorbed;
+          userCharacter.power = userCharacter.initialPower;
+          attackButtons.style.display ="none";
+          defenseButtons.style.display = "none";
+          opponentChosen = false;
+          attackMode = true;
+          numberOfOpponents = numberOfOpponents -1;
+          if (numberOfOpponents == 0) {
+            messageHandler('game over win');
+          }
         }
        
       } else if (randomSwitch >= .5) {
@@ -530,9 +579,29 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
              defenseButtons.style.display = "none";
              removeStatsContainer(player);
              removeStatsContainer(computer);
-             gameWindow.removeChild(buttonsBox);
+             userCharacter.life = userCharacter.initialLife;
+             userCharacter.power = userCharacter.initialPower;
+             computerCharacter.life = computerCharacter.initialLife;
+             computerCharacter.power = computerCharacter.initialPower;
+    
+             playerOneChosen = false;
+             opponentChosen = false;
           } else if (computerCharacter.life <= 0) {
+            console.log("insidethe win handler: "+ computer);
             messageHandler('win', computerCharacter);
+            player.classList.remove('position-two');
+            player.classList.add('position-one');
+            gameWindow.removeChild(computer);
+            userCharacter.life = userCharacter.initialLife + computerCharacter.absorbed;
+            userCharacter.power = userCharacter.initialPower;
+            attackButtons.style.display ="none";
+            defenseButtons.style.display = "none";
+            opponentChosen = false;
+            attackMode = true;
+            numberOfOpponents = numberOfOpponents -1;
+            if (numberOfOpponents == 0) {
+              messageHandler('game over win');
+            }
           }
         }
       } else if(event.target.id == 'defend-down-button' && userCharacter.life > 0 && computerCharacter.life > 0){
@@ -561,9 +630,29 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
              defenseButtons.style.display = "none";
              removeStatsContainer(player);
              removeStatsContainer(computer);
-             gameWindow.removeChild(buttonsBox);
+             userCharacter.life = userCharacter.initialLife;
+             userCharacter.power = userCharacter.initialPower;
+             computerCharacter.life = computerCharacter.initialLife;
+             computerCharacter.power = computerCharacter.initialPower;
+
+             playerOneChosen = false;
+             opponentChosen = false;
           } else if (computerCharacter.life <= 0) {
+            console.log("insidethe win handler: "+ computer);
             messageHandler('win', computerCharacter);
+            player.classList.remove('position-two');
+            player.classList.add('position-one');
+            gameWindow.removeChild(computer);
+            userCharacter.life = userCharacter.initialLife + computerCharacter.absorbed;
+            userCharacter.power = userCharacter.initialPower;
+            attackButtons.style.display ="none";
+            defenseButtons.style.display = "none";
+            opponentChosen = false;
+            attackMode = true;
+            numberOfOpponents = numberOfOpponents -1;
+            if (numberOfOpponents == 0) {
+              messageHandler('game over win');
+            }
           }
 
         } else if (randomSwitch >= .5) {
@@ -572,37 +661,21 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
 
         }
       }
-    //   }else if ( userCharacter.life <= 0 ) {
-    //     console.log('inside the loose handler');
-    //     messageHandler('loose');
-    //     player.classList.remove('position-one');
-    //     player.classList.remove('postion-two');
-    //     computer.classList.remove('position-three');
-    //     computer.classList.remove('position-four');
-    //  } else if (computerCharacter.life <= 0) {
-    //    messageHandler('win', computerCharacter);
-    //  }
 
-     console.log("user life"+ userCharacter.life);
-  }
+    }
+  } 
 
+  //reload the stats for after every move
   statsHandler(computerCharacter);
   statsHandler(userCharacter);
-
 
   function statsHandler(character) {
     let forceArg = `force-stat${character.id}`;
     let powerArg = `power-stat${character.id}`;
     console.log("forcearg:"+forceArg);
-
     document.getElementById(forceArg).textContent = character.life;
     document.getElementById(powerArg).textContent = character.power;
   }
   
-  
-
-
-  
 });
-
-//
+// end Event Listener
