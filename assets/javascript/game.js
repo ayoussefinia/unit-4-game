@@ -22,22 +22,22 @@ screen.style.width = window.innerWidth;
 // this player power will be used to calculate the attack power for each attack. 
 
 // there will be a random component to each attack: 
-// 25% your attack will be  - 25% as strong as your "player power"
-// 25% your attack will be - 50% as strong as your "player power"
-// 25% your attack will be - 75% as strong as your "player power"
-// 25% you will have full  - 100% attack power
+// 33% your attack will be  - 50% as strong as your "player power"
+// 33% your attack will be - 75% as strong as your "player power"
+// 33% your attack will be - 100% as strong as your "player power"
 
-// your player power increases with each victory
 
-// when you attack there will be a 50% probability of a hit 
+// your player power increases with each victory by absorbing 10 percent of your defeated victims player powder
 
-// this is because both the attacker and defender have two positions they can occupy. 
+// when you attack there will be a 50% probability of a hit
+//ergo 50% chance miss
+
 
 // the attacker can attack down or attack up. the computer with randomly select the down or up position. if the computer selects up and the attacker attacks up you will hit and trigger the attack power calculation mentioned Above 
 
 // if you attack up and the computer dodges the attack by selecting down you miss and inflict zero damage
 
-// after each attack the defender gets a chance to respond. in defense mode you get to choose weather to occupy the up position or the down position. the same logic occurs for the probability of a hit. 
+// after each attack the computer gets a chance to respond. in defense mode you get to choose weather to occupy the up position or the down position. the same logic occurs for the probability of a hit. 
 
 // player will discover better chances if they choose a stronger character and a weak oponent on the first few matches 
 
@@ -48,14 +48,18 @@ let stormTrooper = {
   "name" : "Storm Trooper",
   "life" : 350,
   "power" : 160,
-  "position":1
+  "position":1,
+  "initialPower" : 160,
+  "absorbed" : 16
 }
 let yoda = {
   "id" : 2,
   "name" : "Yoda",
   "life" : 350,
   "power" : 270,
-  "position":1
+  "position":1,
+  "initialPower" : 270,
+  "absorbed" : 27
 }
 
 let bobaFet = {
@@ -63,14 +67,18 @@ let bobaFet = {
   "name" : "Boba Fet",
   "life" : 350,
   "power" : 190,
-  "position":1
+  "position":1,
+  "initialPower" : 190,
+  "absorbed" : 19
 }
 let jabba = {
   "id" : 4,
   "name" : "Jabba the Hutt",
   "life" : 350,
   "power" : 220,
-  "position":1
+  "position":1,
+  "initialPower" : 220,
+  "absorbed" : 22
 }
 
 let vader = {
@@ -78,7 +86,9 @@ let vader = {
   "name" : "Darth Vader",
   "life" : 350,
   "power" : 250,
-  "position":1
+  "position":1,
+  "initialPower" : 250,
+  "absorbed" : 25
 }
 
 let playerOneChosen = false;
@@ -161,6 +171,23 @@ function createCharacterStatsContainer(character, characterPic) {
   return characterStatsContainer;
 };
 
+function removeStatsContainer(character) {
+  character.classList.remove('chosen-character');
+  let characterPic = character.children[1];
+  gameWindow.removeChild(character);
+  console.log(characterPic);
+ 
+  // gameWindow.removeChild(character);
+  characterContainer.appendChild(characterPic);
+
+ 
+
+  // gameWindow.removeChild(character);
+  // characterContainer.appendChild(character)
+};
+
+
+
 //creates the instruction box below the characters 
 let instrunctionBox = document.createElement('div');
 instrunctionBox.classList.add('instruction-box');
@@ -172,11 +199,11 @@ function attackHandler(user) {
   let randomAttack = Math.random();
   let attackPower;
   if(randomAttack <= .333) {
-    attackPower = (user.power / 3)*.5;
+    attackPower = (user.power*2)*.5;
   } else if( .333 > randomAttack <= .666) {
-    attackPower = (user.power / 3)*.75;
+    attackPower = (user.power*2)*.75;
   } else if(randomAttack > .666) {
-    attackPower = (user.power / 3)
+    attackPower = (user.power*2)
   }
   return Math.floor(attackPower);
 }
@@ -201,8 +228,19 @@ function messageHandler(message, character, damage) {
     document.getElementById('instruction-message2').textContent = '';
   } else if (message == 'hurt') {
     document.getElementById('instruction-message').textContent =`${character.name} attacked you and inflicted ${damage} damage`;
-  } 
+    setTimeout(function(){document.getElementById('instruction-message2').textContent = `Select a defense position`}, 1200);
+  } else if (message == 'loose') {
+    document.getElementById('instruction-message').textContent =`GAME OVER`;
+    setTimeout(function(){document.getElementById('instruction-message2').textContent = `Select A Character to Play Again`}, 1200);
+  } else if (message == 'win') {
+    document.getElementById('instruction-message').textContent =`You Beat ${character.name} and absorbed ${character.absorbed} Life Force`;
+    setTimeout(function(){document.getElementById('instruction-message2').textContent = `Select Your Nex Opponent`}, 1200);
+  }
+
+
  }
+
+ // creates both the attack & defense buttons outside the event listener and sets display to none
 
  var buttonsBox = document.createElement('div');
   buttonsBox.classList.add('buttons-box');
@@ -267,7 +305,7 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
   
 
 
-//user needs to pick a character first
+//user needs to pick a character first that will appear on the left side of the screen
   if(playerOneChosen == false && opponentChosen == false) {
       playerOneId = event.target.id;
     if(playerOneId == 'character1') {
@@ -315,7 +353,7 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
     };
   }
  
-  //if the user has chosen he needs to then pick his opponent
+  //if the user has chosen he needs to then pick his opponent who will appar on the right side of the screen;
   if (playerOneChosen == true && opponentChosen == false && event.target.id != playerOneId) {
     computerId = event.target.id;
 
@@ -362,12 +400,14 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
     }
   }
 
+  //if its the users turn to attack
   if (playerOneChosen == true && opponentChosen == true && attackMode== true) {
     
     
     attackButtons.style.display = 'flex';
+    defenseButtons.style.display = 'none';
     
-    
+///control z unil here
 
   
     if(event.target.id == 'attack-up-button' && userCharacter.life > 0 && computerCharacter.life > 0){
@@ -389,7 +429,21 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
         attackStrength = attackHandler(userCharacter);
         messageHandler('hit', computerCharacter, attackStrength)
         computerCharacter.life = computerCharacter.life - attackStrength;
-        document.getElementsByClassName('attack-buttons')[0].style.display = "none";
+        if (userCharacter.life <= 0 ) {
+          console.log('inside the loose handler');
+           messageHandler('loose');
+           player.classList.remove('position-one');
+           player.classList.remove('position-two');
+           computer.classList.remove('position-three');
+           computer.classList.remove('position-four');
+           attackButtons.style.display ="none";
+           defenseButtons.style.display = "none";
+           removeStatsContainer(player);
+           removeStatsContainer(computer);
+           gameWindow.removeChild(buttonsBox);
+        } else if (computerCharacter.life <= 0) {
+          messageHandler('win', computerCharacter);
+        }
       }
       
     } else if (event.target.id == 'attack-down-button' && userCharacter.life > 0 && computerCharacter.life > 0) {
@@ -405,6 +459,21 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
         attackStrength = attackHandler(userCharacter);
         messageHandler('hit', computerCharacter, attackStrength);
         computerCharacter.life = computerCharacter.life - attackStrength;
+        if (userCharacter.life <= 0 ) {
+          console.log('inside the loose handler');
+           messageHandler('loose');
+           player.classList.remove('position-one');
+           player.classList.remove('position-two');
+           computer.classList.remove('position-three');
+           computer.classList.remove('position-four');
+           attackButtons.style.display ="none";
+           defenseButtons.style.display = "none";
+           removeStatsContainer(player);
+           removeStatsContainer(computer);
+           gameWindow.removeChild(buttonsBox);
+        } else if (computerCharacter.life <= 0) {
+          messageHandler('win', computerCharacter);
+        }
        
       } else if (randomSwitch >= .5) {
         computerCharacter.position = 3;
@@ -414,39 +483,25 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
   
       }
     }
-
-    // } else if (event.target.id == 'defend-up-button' && userCharacter.life > 0 && computerCharacter.life > 0) {
-    //   attackMode =true;
-    //   attackButtons.style.display ="flex";
-    //   defenseButtons.style.display = "none";
-    //   //random swich decides if the computer wants to defend up or dow
-    //   randomSwitch = Math.random();
-    //   if(randomSwitch < .5) {
-    //     userCharacter.position = 2;
-    //     computer.classList.remove('position-one');
-    //     computer.classList.add('position-two');
-    //     messageHandler('dodge', computerCharacter);
-
-       
-    //   } else if (randomSwitch >= .5) {
-    //     computerCharacter.position = 1;
-    //     computer.classList.remove('position-two');
-    //     computer.classList.add('position-one');
-        
-    //     attackStrength = attackHandler(computerCharacter);
-    //     messageHandler('hurt', computerCharacter, attackStrength);
-
-    //     userCharacter.life = userCharacter.life - attackStrength;
-  
-    //   }
+    // } else if ( userCharacter.life <= 0 ) {
+    //   console.log('inside the loose handler');
+    //    messageHandler('loose');
+    //    player.classList.remove('position-one');
+    //    player.classList.remove('postion-two');
+    //    computer.classList.remove('position-three');
+    //    computer.classList.remove('position-four');
+    // } else if (computerCharacter.life <= 0) {
+    //   messageHandler('win', computerCharacter);
     // }
 
-   
-
+    console.log("user life"+ userCharacter.life);
   }
+
   if (playerOneChosen == true && opponentChosen == true && attackMode== false) {
     attackButtons.style.display = 'none';
     defenseButtons.style.display = 'flex';
+
+   
       if(event.target.id == 'defend-up-button' && userCharacter.life > 0 && computerCharacter.life > 0){
         attackButtons.style.display = 'flex';
         defenseButtons.style.display = 'none';
@@ -464,7 +519,21 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
           attackStrength = attackHandler(computerCharacter);
           messageHandler('hurt', computerCharacter, attackStrength)
           userCharacter.life = userCharacter.life - attackStrength;
-
+          if (userCharacter.life <= 0 ) {
+            console.log('inside the loose handler');
+             messageHandler('loose');
+             player.classList.remove('position-one');
+             player.classList.remove('position-two');
+             computer.classList.remove('position-three');
+             computer.classList.remove('position-four');
+             attackButtons.style.display ="none";
+             defenseButtons.style.display = "none";
+             removeStatsContainer(player);
+             removeStatsContainer(computer);
+             gameWindow.removeChild(buttonsBox);
+          } else if (computerCharacter.life <= 0) {
+            messageHandler('win', computerCharacter);
+          }
         }
       } else if(event.target.id == 'defend-down-button' && userCharacter.life > 0 && computerCharacter.life > 0){
         attackButtons.style.display = 'flex';
@@ -481,7 +550,21 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
           attackStrength = attackHandler(computerCharacter);
           messageHandler('hurt', computerCharacter, attackStrength)
           userCharacter.life = userCharacter.life - attackStrength;
-          
+          if (userCharacter.life <= 0 ) {
+            console.log('inside the loose handler');
+             messageHandler('loose');
+             player.classList.remove('position-one');
+             player.classList.remove('position-two');
+             computer.classList.remove('position-three');
+             computer.classList.remove('position-four');
+             attackButtons.style.display ="none";
+             defenseButtons.style.display = "none";
+             removeStatsContainer(player);
+             removeStatsContainer(computer);
+             gameWindow.removeChild(buttonsBox);
+          } else if (computerCharacter.life <= 0) {
+            messageHandler('win', computerCharacter);
+          }
 
         } else if (randomSwitch >= .5) {
           
@@ -489,10 +572,18 @@ document.getElementsByClassName('body-container')[0].addEventListener('click', f
 
         }
       }
-      // } else if(computerCharacter.life <= 0) {
+    //   }else if ( userCharacter.life <= 0 ) {
+    //     console.log('inside the loose handler');
+    //     messageHandler('loose');
+    //     player.classList.remove('position-one');
+    //     player.classList.remove('postion-two');
+    //     computer.classList.remove('position-three');
+    //     computer.classList.remove('position-four');
+    //  } else if (computerCharacter.life <= 0) {
+    //    messageHandler('win', computerCharacter);
+    //  }
 
-      // }
-
+     console.log("user life"+ userCharacter.life);
   }
 
   statsHandler(computerCharacter);
